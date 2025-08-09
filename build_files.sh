@@ -12,4 +12,4 @@ python manage.py collectstatic --noinput --settings=backend.settings_vercel
 # Run migrations
 python manage.py migrate --settings=backend.settings_vercel
 
-echo "✅ Build completed!" 
+echo "✅ Build completed!"
