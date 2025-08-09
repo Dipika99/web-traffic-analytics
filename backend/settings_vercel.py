@@ -64,12 +64,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-# Database - Use in-memory SQLite for Vercel (serverless-friendly)
-# Note: This means data won't persist between requests in production
+# Database - Use temporary SQLite file for Vercel
+# This provides better data persistence during the function's lifetime
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': ':memory:',
+        'NAME': '/tmp/db.sqlite3',
     }
 }
 
@@ -131,17 +131,30 @@ LOGGING = {
     },
 }
 
-# Auto-migrate for in-memory database
-# This ensures the database schema is created on each serverless function invocation
+# Auto-setup for Vercel deployment
 import sys
-if 'migrate' not in sys.argv and 'collectstatic' not in sys.argv:
+import os
+
+def setup_database():
+    """Initialize database and create sample data if needed"""
     try:
         import django
         from django.core.management import execute_from_command_line
-        django.setup()
-        execute_from_command_line(['manage.py', 'migrate', '--run-syncdb'])
-        # Create default superuser for admin access
-        execute_from_command_line(['manage.py', 'create_default_superuser'])
+        
+        # Check if database file exists
+        db_path = '/tmp/db.sqlite3'
+        if not os.path.exists(db_path):
+            print("🔄 Setting up new database...")
+            django.setup()
+            execute_from_command_line(['manage.py', 'migrate', '--run-syncdb'])
+            execute_from_command_line(['manage.py', 'create_default_superuser'])
+            print("✅ Database setup completed!")
+        else:
+            print("📂 Using existing database")
+            
     except Exception as e:
-        # Log the error but don't crash the application
-        print(f"Setup warning: {e}") 
+        print(f"⚠️  Setup warning: {e}")
+
+# Only run setup if not in management command context
+if 'manage.py' not in sys.argv and 'migrate' not in sys.argv and 'collectstatic' not in sys.argv:
+    setup_database() 

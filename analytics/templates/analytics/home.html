@@ -17,11 +17,14 @@
         <div class="content">
             <div class="search-section">
                 <h2>🔍 Search Website Traffic</h2>
+                <p>Enter any website URL to generate and view traffic analytics data</p>
+                
                 <form method="post">
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="id_url">Website URL:</label>
                         {{ form.url }}
+                        <small>Examples: google.com, facebook.com, https://twitter.com</small>
                     </div>
                     <button type="submit" class="btn">📊 Show Traffic Logs</button>
                 </form>
