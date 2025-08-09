@@ -1,0 +1,137 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traffic Analytics Dashboard</title>
+    <link rel="stylesheet" href="{% static 'analytics/css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Traffic Analytics Dashboard</h1>
+            <p>Monitor and analyze website traffic patterns</p>
+        </div>
+
+        <div class="content">
+            <div class="search-section">
+                <h2>🔍 Search Website Traffic</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="id_url">Website URL:</label>
+                        {{ form.url }}
+                    </div>
+                    <button type="submit" class="btn">📊 Show Traffic Logs</button>
+                </form>
+            </div>
+
+            {% if form.errors %}
+                <div class="error-message">
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if website %}
+                <div class="results-section">
+                    <div class="website-info">
+                        <h3>📈 {{ website.name }}</h3>
+                        <p>{{ website.domain }}</p>
+                    </div>
+
+                    {% if logs %}
+                        <div class="stats">
+                            <div class="stat-card">
+                                <div class="stat-number">{{ logs|length }}</div>
+                                <div class="stat-label">Total Requests</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">{{ logs.0.timestamp|date:"M d" }}</div>
+                                <div class="stat-label">Latest Activity</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">{{ logs.0.timestamp|date:"H:i" }}</div>
+                                <div class="stat-label">Last Request Time</div>
+                            </div>
+                        </div>
+
+                        <table class="logs-table">
+                            <thead>
+                                <tr>
+                                    <th>📍 Path</th>
+                                    <th>📝 Method</th>
+                                    <th>🌐 IP Address</th>
+                                    <th>🔧 User Agent</th>
+                                    <th>↩️ Referrer</th>
+                                    <th>⏰ Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for log in logs %}
+                                    <tr>
+                                        <td><strong>{{ log.path }}</strong></td>
+                                        <td>
+                                            <span class="method-badge method-{{ log.method|lower }}">
+                                                {{ log.method }}
+                                            </span>
+                                        </td>
+                                        <td>{{ log.ip_address }}</td>
+                                        <td title="{{ log.user_agent }}">
+                                            {{ log.user_agent|truncatechars:50 }}
+                                        </td>
+                                        <td>{{ log.referrer|default:"-" }}</td>
+                                        <td>{{ log.timestamp|date:"M d, Y H:i" }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="no-logs">
+                            <h3>📭 No traffic logs found</h3>
+                            <p>No traffic data has been recorded for this website yet.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Add loading animation
+        document.querySelector('form').addEventListener('submit', function() {
+            const loading = document.createElement('div');
+            loading.className = 'loading';
+            loading.innerHTML = '<div class="spinner"></div><p>Loading traffic data...</p>';
+            document.querySelector('.content').appendChild(loading);
+            loading.style.display = 'block';
+        });
+
+        // Add fade-in animation to results
+        const resultsSection = document.querySelector('.results-section');
+        if (resultsSection) {
+            resultsSection.classList.add('fade-in');
+        }
+
+        // Add hover effects to table rows
+        const tableRows = document.querySelectorAll('.logs-table tbody tr');
+        tableRows.forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.01)';
+                this.style.transition = 'transform 0.2s ease';
+            });
+            
+            row.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+
+        // Auto-focus on URL input
+        document.getElementById('id_url').focus();
+    </script>
+</body>
+</html>
