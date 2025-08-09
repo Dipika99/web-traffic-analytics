@@ -64,11 +64,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-# Database - Use SQLite for Vercel (serverless-friendly)
+# Database - Use in-memory SQLite for Vercel (serverless-friendly)
+# Note: This means data won't persist between requests in production
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': ':memory:',
     }
 }
 
@@ -128,4 +129,19 @@ LOGGING = {
         'handlers': ['console'],
         'level': 'INFO',
     },
-} 
+}
+
+# Auto-migrate for in-memory database
+# This ensures the database schema is created on each serverless function invocation
+import sys
+if 'migrate' not in sys.argv and 'collectstatic' not in sys.argv:
+    try:
+        import django
+        from django.core.management import execute_from_command_line
+        django.setup()
+        execute_from_command_line(['manage.py', 'migrate', '--run-syncdb'])
+        # Create default superuser for admin access
+        execute_from_command_line(['manage.py', 'create_default_superuser'])
+    except Exception as e:
+        # Log the error but don't crash the application
+        print(f"Setup warning: {e}") 
