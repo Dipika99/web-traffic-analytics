@@ -17,10 +17,5 @@
   ],
   "env": {
     "DJANGO_SETTINGS_MODULE": "backend.settings_vercel"
-  },
-  "functions": {
-    "backend/wsgi.py": {
-      "maxDuration": 30
-    }
   }
 } 
