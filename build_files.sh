@@ -4,15 +4,20 @@
 echo "🚀 Building for Vercel deployment..."
 
 # Install dependencies
-pip install -r requirements.txt
+pip3 install -r requirements.txt
+
+# Create staticfiles directory
+mkdir -p staticfiles
 
 # Collect static files
-python manage.py collectstatic --noinput --settings=backend.settings_vercel
+python3 manage.py collectstatic --noinput --settings=backend.settings_vercel
 
 # Run migrations
-python manage.py migrate --settings=backend.settings_vercel
+python3 manage.py migrate --settings=backend.settings_vercel
 
 # Create default superuser
-python manage.py create_default_superuser --settings=backend.settings_vercel
+python3 manage.py create_default_superuser --settings=backend.settings_vercel
 
 echo "✅ Build completed!"
+echo "📁 Contents of staticfiles directory:"
+ls -la staticfiles/
