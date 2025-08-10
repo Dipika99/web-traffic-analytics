@@ -64,12 +64,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-# Database - Use a simple in-memory database that doesn't require _sqlite3
-# For Vercel serverless, we'll use a minimal database setup
+# Database - Use PostgreSQL from Supabase
+import dj_database_url
+import os
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.dummy',
-    }
+    'default': dj_database_url.config(
+        default=os.getenv('DATABASE_URL'),
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 }
 
 # Password validation
@@ -140,10 +144,17 @@ def setup_database():
         import django
         from django.core.management import execute_from_command_line
         
-        print("🔄 Setting up dummy database for Vercel...")
+        print("🔄 Setting up PostgreSQL database for Vercel...")
         django.setup()
-        # Skip migrations for dummy database
-        print("✅ Dummy database setup completed!")
+        
+        # Run migrations for PostgreSQL
+        from django.core.management import call_command
+        call_command('migrate', verbosity=0)
+        
+        # Create default superuser
+        call_command('create_default_superuser', verbosity=0)
+        
+        print("✅ PostgreSQL database setup completed!")
             
     except Exception as e:
         print(f"⚠️  Setup warning: {e}")
