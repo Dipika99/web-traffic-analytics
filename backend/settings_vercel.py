@@ -41,7 +41,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'analytics.middleware.TrafficLoggingMiddleware',
+    # 'analytics.middleware.TrafficLoggingMiddleware',  # Temporarily disabled due to dummy database
 ]
 
 ROOT_URLCONF = 'backend.urls'
