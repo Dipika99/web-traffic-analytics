@@ -1,4 +1,5 @@
 from django.utils.deprecation import MiddlewareMixin
+from .models import TrafficLog
 
 class TrafficLoggingMiddleware(MiddlewareMixin):
     def process_request(self, request):
@@ -6,7 +7,18 @@ class TrafficLoggingMiddleware(MiddlewareMixin):
         if request.path.startswith('/admin') or request.path.startswith('/static'):
             return None
         
-        # For now, we'll just pass through without logging to database
-        # Since we're using a dummy database and generating traffic data on-the-fly
-        # This middleware can be enhanced later if needed
+        try:
+            # Log traffic data to PostgreSQL database
+            TrafficLog.objects.create(
+                path=request.path,
+                method=request.method,
+                ip_address=request.META.get('REMOTE_ADDR', ''),
+                user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                referrer=request.META.get('HTTP_REFERER', ''),
+                website=None  # Will be set when website is created
+            )
+        except Exception as e:
+            # Log error but don't crash the request
+            print(f"⚠️  Traffic logging error: {e}")
+        
         return None
