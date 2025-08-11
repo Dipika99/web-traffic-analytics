@@ -67,7 +67,7 @@ This project is deployed on Vercel. You can deploy your own instance by connecti
 Check out the working demo here:  
 [https://web-traffic-analytics-git-main-dipikas-projects-b56e4781.vercel.app](https://web-traffic-analytics-git-main-dipikas-projects-b56e4781.vercel.app)
 
-## 📸 Screenshot
+## Screenshot
 <img width="910" height="732" alt="Screenshot 2025-08-10 at 19 59 28" src="https://github.com/user-attachments/assets/2071ed0b-afbe-43a7-988b-01372832fdbb" />
 
 ## License
