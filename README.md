@@ -70,10 +70,6 @@ Check out the working demo here:
 ## 📸 Screenshot
 <img width="910" height="732" alt="Screenshot 2025-08-10 at 19 59 28" src="https://github.com/user-attachments/assets/2071ed0b-afbe-43a7-988b-01372832fdbb" />
 
-## Contributing
-
-Feel free to submit issues or pull requests if you'd like to contribute!
-
 ## License
 
 This project is licensed under the MIT License.
